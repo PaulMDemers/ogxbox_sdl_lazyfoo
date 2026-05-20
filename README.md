@@ -87,6 +87,30 @@ To build one lesson:
 make -C 001_hello_sdl
 ```
 
+To stage release artifacts:
+
+```sh
+make release
+```
+
+This writes ISOs and XBE folders under `dist/release/lazyfoo`.
+
+## Verification
+
+The release artifact checker expects the currently ported SDL/SDL_image set:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\verify_lazyfoo.ps1 -CheckReleaseArtifacts
+```
+
+To capture the completed lessons in xemu:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\capture_lazyfoo_xemu.ps1
+```
+
+Screenshots are written to `dist/captures/xemu/lazyfoo` with a JSON manifest.
+
 ## Controls
 
 The demos run without a keyboard. When a tutorial expects keyboard input, use

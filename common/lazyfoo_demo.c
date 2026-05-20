@@ -536,14 +536,20 @@ static void render_surface_lessons(DemoState *state, Uint32 ticks)
         SDL_BlitScaled(optimized, NULL, state->window_surface, &dst);
         SDL_FreeSurface(optimized);
     } else if (LAZYFOO_LESSON == 6) {
-        xpm = IMG_ReadXPMFromArray((char **)k_xpm_image);
-        if (!xpm) fail("IMG_ReadXPMFromArray");
         dst.x = 160 + (int)(sin(ticks / 500.0) * 40.0);
         dst.y = 80;
         dst.w = 320;
         dst.h = 320;
-        SDL_BlitScaled(xpm, NULL, state->window_surface, &dst);
-        SDL_FreeSurface(xpm);
+        SDL_BlitScaled(state->surface, NULL, state->window_surface, &dst);
+
+        xpm = IMG_ReadXPMFromArray((char **)k_xpm_image);
+        if (xpm) {
+            SDL_Rect overlay = {dst.x + 96, dst.y + 96, 128, 128};
+            SDL_BlitScaled(xpm, NULL, state->window_surface, &overlay);
+            SDL_FreeSurface(xpm);
+        } else {
+            debugPrint("IMG_ReadXPMFromArray failed: %s\n", IMG_GetError());
+        }
     }
 
     SDL_UpdateWindowSurface(state->window);
