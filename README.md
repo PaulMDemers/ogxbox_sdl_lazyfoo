@@ -3,9 +3,9 @@
 Standalone original Xbox ports of the Lazy Foo SDL2 tutorial sequence.
 
 The first pass focuses on tutorials that can be expressed with nxdk's built-in
-SDL2 and SDL2_image support. Lessons that require SDL_ttf, SDL_mixer, mobile
-APIs, or OpenGL are tracked but skipped until those dependencies get their own
-pass.
+SDL2, SDL2_image, and SDL_ttf support. Lessons that require SDL_mixer, mobile
+APIs, or SDL/OpenGL are tracked but skipped until those dependencies get their
+own pass.
 
 Source tutorial index:
 
@@ -30,6 +30,7 @@ Implemented:
 - 13 Alpha Blending
 - 14 Animated Sprites and VSync
 - 15 Rotation and Flipping
+- 16 True Type Fonts
 - 17 Mouse Events
 - 18 Key States
 - 19 Gamepads and Joysticks
@@ -64,13 +65,12 @@ Implemented:
 
 Skipped for now:
 
-- SDL_ttf lesson: 16
 - SDL_mixer lesson: 21
 - Audio recording lesson: 34
 - SDL/OpenGL lessons: 50-51
 - Platform/mobile/touch lessons: 52-55
 
-That leaves 46 buildable SDL/SDL_image tutorial ports in this first sweep.
+That leaves 47 buildable SDL/SDL_image/SDL_ttf tutorial ports in this sweep.
 
 ## Build
 
@@ -97,7 +97,7 @@ This writes ISOs and XBE folders under `dist/release/lazyfoo`.
 
 ## Verification
 
-The release artifact checker expects the currently ported SDL/SDL_image set:
+The release artifact checker expects the currently ported SDL/SDL_image/SDL_ttf set:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tools\verify_lazyfoo.ps1 -CheckReleaseArtifacts

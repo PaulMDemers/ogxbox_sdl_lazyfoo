@@ -14,6 +14,7 @@ LAZYFOO_APPS = \
 	013_alpha_blending \
 	014_animated_sprites_vsync \
 	015_rotation_flipping \
+	016_true_type_fonts \
 	017_mouse_events \
 	018_key_states \
 	019_gamepads_joysticks \

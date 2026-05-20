@@ -17,7 +17,7 @@ Status legend:
 
 - OK: visible, lesson-appropriate output captured in xemu.
 - Watch: works, but needs deeper parity or dependency follow-up later.
-- Deferred: not ported in this SDL/SDL_image pass.
+- Deferred: not ported in this SDL/SDL_image/SDL_ttf pass.
 
 | Lesson | Port | Capture | Notes |
 | --- | --- | --- | --- |
@@ -36,7 +36,7 @@ Status legend:
 | 13 | Alpha Blending | OK | Blended overlay visible. |
 | 14 | Animated Sprites and VSync | OK | Animated sprite frame visible. |
 | 15 | Rotation and Flipping | OK | Rotated texture visible after 15s settle. |
-| 16 | True Type Fonts | Deferred | SDL_ttf batch. |
+| 16 | True Type Fonts | Watch | SDL_ttf text render using nxdk's bundled sample font. |
 | 17 | Mouse Events | OK | Cursor visual visible after 15s settle. |
 | 18 | Key States | OK | Four input-state bars visible. |
 | 19 | Gamepads and Joysticks | OK | Cross-axis and center marker visible. |
@@ -54,7 +54,7 @@ Status legend:
 | 31 | Scrolling Backgrounds | OK | Repeating background visible. |
 | 32 | Text Input and Clipboard Handling | Watch | Uses bitmap input field until SDL_ttf text UI is available. |
 | 33 | File Reading and Writing | Watch | File result indicator renders; verify real hardware storage later. |
-| 34 | Audio Recording | Deferred | Needs an Xbox capture decision. |
+| 34 | Audio Recording | Deferred | nxdk Xbox audio capture support is disabled. |
 | 35 | Window Events | OK | Window-event proxy panel visible. |
 | 36 | Multiple Windows | OK | Multiple panel proxy visible. |
 | 37 | Multiple Displays | OK | Display count visualization visible. |
@@ -70,13 +70,14 @@ Status legend:
 | 47 | Semaphores | OK | Semaphore counter and gauge visible. |
 | 48 | Atomic Operations | OK | Atomic counter and gauge visible. |
 | 49 | Mutexes and Conditions | OK | Mutex/condition counter and gauge visible. |
-| 50 | SDL and OpenGL 2 | Deferred | Decide SDL+NXGL route. |
-| 51 | SDL and Modern OpenGL | Deferred | Decide SDL+NXGL route. |
+| 50 | SDL and OpenGL 2 | Deferred | nxdk SDL has no Xbox GL context path. |
+| 51 | SDL and Modern OpenGL | Deferred | nxdk SDL has no Xbox GL context path. |
 | 52-55 | Mobile/touch/orientation | Deferred | Not applicable as written. |
 
 ## Follow-Up Items
 
 - Replace the lesson 6 procedural fallback with a real bundled PNG/JPG asset
   once the asset packaging convention is settled.
-- Revisit lessons 32-33 after SDL_ttf and storage policy are decided.
+- Revisit lesson 32 after deciding whether to render real text input with
+  SDL_ttf or keep the bitmap proxy for controller-friendly captures.
 - Add visual comparison snapshots once a desktop SDL reference runner exists.

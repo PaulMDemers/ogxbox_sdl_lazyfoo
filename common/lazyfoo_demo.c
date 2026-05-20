@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <hal/debug.h>
 #include <hal/video.h>
 #include <hal/xbox.h>
@@ -36,6 +37,7 @@ static const LazyFooLessonInfo k_lessons[] = {
     {13, "alpha_blending", "Alpha Blending"},
     {14, "animated_sprites_vsync", "Animated Sprites and VSync"},
     {15, "rotation_flipping", "Rotation and Flipping"},
+    {16, "true_type_fonts", "True Type Fonts"},
     {17, "mouse_events", "Mouse Events"},
     {18, "key_states", "Key States"},
     {19, "gamepads_joysticks", "Gamepads and Joysticks"},
@@ -119,6 +121,8 @@ typedef struct DemoState {
     SDL_Texture *texture;
     SDL_Texture *sprite_texture;
     SDL_Texture *color_key_texture;
+    SDL_Texture *font_texture;
+    TTF_Font *font;
     SDL_Rect sprite_clips[4];
     int input_x;
     int input_y;
@@ -131,6 +135,7 @@ typedef struct DemoState {
     int thread_count;
     int sync_count;
     int file_ok;
+    int ttf_initialized;
     SDL_TimerID timer_id;
     SDL_Thread *thread;
     SDL_sem *sem;
@@ -184,6 +189,14 @@ static void fail(const char *stage)
 {
     debugPrint("LazyFoo %02d failed at %s\nSDL: %s\nIMG: %s\n",
                LAZYFOO_LESSON, stage, SDL_GetError(), IMG_GetError());
+    Sleep(5000);
+    XReboot();
+}
+
+static void fail_ttf(const char *stage)
+{
+    debugPrint("LazyFoo %02d failed at %s\nSDL: %s\nTTF: %s\n",
+               LAZYFOO_LESSON, stage, SDL_GetError(), TTF_GetError());
     Sleep(5000);
     XReboot();
 }
@@ -327,7 +340,7 @@ static void setup(DemoState *state)
         fail("SDL_GetWindowSurface");
     }
 
-    if (LAZYFOO_LESSON >= 7) {
+    if (LAZYFOO_LESSON == 16 || LAZYFOO_LESSON >= 7) {
         create_renderer(state);
     }
 
@@ -342,6 +355,25 @@ static void setup(DemoState *state)
         state->color_key_texture = texture_from_surface(state, keyed);
         SDL_FreeSurface(keyed);
         SDL_SetTextureBlendMode(state->color_key_texture, SDL_BLENDMODE_BLEND);
+    }
+
+    if (LAZYFOO_LESSON == 16) {
+        SDL_Color title_color = {125, 255, 125, 255};
+        SDL_Surface *title_surface;
+        if (TTF_Init() != 0) {
+            fail_ttf("TTF_Init");
+        }
+        state->ttf_initialized = 1;
+        state->font = TTF_OpenFont("D:\\vegur-regular.ttf", 40);
+        if (!state->font) {
+            fail_ttf("TTF_OpenFont");
+        }
+        title_surface = TTF_RenderText_Blended(state->font, "Lazy Foo SDL_ttf", title_color);
+        if (!title_surface) {
+            fail_ttf("TTF_RenderText_Blended");
+        }
+        state->font_texture = texture_from_surface(state, title_surface);
+        SDL_FreeSurface(title_surface);
     }
 
     state->sprite_clips[0] = (SDL_Rect){0, 0, 64, 64};
@@ -382,11 +414,14 @@ static void cleanup(DemoState *state)
     if (state->sem) SDL_DestroySemaphore(state->sem);
     if (state->color_key_texture) SDL_DestroyTexture(state->color_key_texture);
     if (state->sprite_texture) SDL_DestroyTexture(state->sprite_texture);
+    if (state->font_texture) SDL_DestroyTexture(state->font_texture);
+    if (state->font) TTF_CloseFont(state->font);
     if (state->texture) SDL_DestroyTexture(state->texture);
     if (state->sprite_surface) SDL_FreeSurface(state->sprite_surface);
     if (state->surface) SDL_FreeSurface(state->surface);
     if (state->renderer) SDL_DestroyRenderer(state->renderer);
     if (state->window) SDL_DestroyWindow(state->window);
+    if (state->ttf_initialized) TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 }
@@ -662,6 +697,26 @@ static void render_texture(DemoState *state, Uint32 ticks)
         if (state->input_x < 0) flip = SDL_FLIP_HORIZONTAL;
         if (state->input_y < 0) flip = SDL_FLIP_VERTICAL;
         SDL_RenderCopyEx(state->renderer, state->texture, NULL, &dst, angle, NULL, flip);
+        break;
+    }
+    case 16: {
+        int tw = 0;
+        int th = 0;
+        draw_bar(state, 80, 126, 480, 228, 30, 41, 59);
+        draw_bar(state, 96, 142, 448, 40, 51, 65, 85);
+        draw_bar(state, 116, 310, (ticks / 12) % 408, 20, 125, 255, 125);
+        if (state->font_texture) {
+            SDL_QueryTexture(state->font_texture, NULL, NULL, &tw, &th);
+            SDL_SetTextureColorMod(state->font_texture, 12, 18, 28);
+            SDL_RenderCopy(state->renderer, state->font_texture, NULL,
+                           &(SDL_Rect){(SCREEN_WIDTH - tw) / 2 + 4, 214, tw, th});
+            SDL_SetTextureColorMod(state->font_texture, 125, 255, 125);
+            SDL_RenderCopy(state->renderer, state->font_texture, NULL,
+                           &(SDL_Rect){(SCREEN_WIDTH - tw) / 2, 210, tw, th});
+            SDL_SetTextureColorMod(state->font_texture, 255, 255, 255);
+        }
+        draw_digit(state, 1, 154, 152, 5);
+        draw_digit(state, 6, 190, 152, 5);
         break;
     }
     case 17:

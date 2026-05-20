@@ -1,5 +1,5 @@
 param(
-    [int]$ExpectedImplementedCount = 46,
+    [int]$ExpectedImplementedCount = 47,
     [switch]$CheckReleaseArtifacts,
     [string]$ReleaseRoot = ""
 )
