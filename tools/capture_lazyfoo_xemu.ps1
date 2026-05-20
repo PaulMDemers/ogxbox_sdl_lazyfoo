@@ -1,6 +1,6 @@
 param(
     [string[]]$Apps = @(),
-    [double]$DelaySeconds = 8.0,
+    [double]$DelaySeconds = 15.0,
     [ValidateRange(1,10)]
     [int]$LaunchAttempts = 3,
     [string]$IsoRoot = "",

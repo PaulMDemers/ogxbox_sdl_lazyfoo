@@ -491,7 +491,7 @@ static void draw_bar(DemoState *state, int x, int y, int w, int h, Uint8 r, Uint
 static void draw_digit(DemoState *state, int digit, int x, int y, int scale)
 {
     static const unsigned char bits[10] = {
-        0x7E, 0x30, 0x6D, 0x79, 0x33, 0x5B, 0x5F, 0x70, 0x7F, 0x7B
+        0x77, 0x12, 0x5D, 0x5B, 0x3A, 0x6B, 0x6F, 0x52, 0x7F, 0x7B
     };
     unsigned char mask = bits[digit % 10];
     int t = scale;
@@ -504,6 +504,34 @@ static void draw_digit(DemoState *state, int digit, int x, int y, int scale)
     if (mask & 0x04) draw_bar(state, x, y + h / 2 + t, t, h / 2 - t, 250, 204, 21);
     if (mask & 0x02) draw_bar(state, x + w + t, y + h / 2 + t, t, h / 2 - t, 250, 204, 21);
     if (mask & 0x01) draw_bar(state, x + t, y + h, w, t, 250, 204, 21);
+}
+
+static void draw_number(DemoState *state, int value, int digits, int x, int y, int scale)
+{
+    int divisor = 1;
+    int i;
+    if (value < 0) value = 0;
+    for (i = 1; i < digits; ++i) {
+        divisor *= 10;
+    }
+    for (i = 0; i < digits; ++i) {
+        draw_digit(state, (value / divisor) % 10, x + i * scale * 7, y, scale);
+        divisor /= 10;
+    }
+}
+
+static void draw_gauge(DemoState *state, int x, int y, int w, int h, int value, int max_value,
+                       Uint8 r, Uint8 g, Uint8 b)
+{
+    int filled;
+    SDL_Rect outline = {x, y, w, h};
+    if (max_value <= 0) max_value = 1;
+    if (value < 0) value = 0;
+    if (value > max_value) value = max_value;
+    filled = (w - 8) * value / max_value;
+    draw_bar(state, x + 4, y + 4, filled, h - 8, r, g, b);
+    SDL_SetRenderDrawColor(state->renderer, 148, 163, 184, 255);
+    SDL_RenderDrawRect(state->renderer, &outline);
 }
 
 static void render_surface_lessons(DemoState *state, Uint32 ticks)
@@ -725,12 +753,17 @@ static void render_texture(DemoState *state, Uint32 ticks)
         int count = 3 + (ticks / 500) % 12;
         int i;
         SDL_StartTextInput();
+        draw_bar(state, 64, 176, 512, 128, 15, 23, 42);
+        SDL_SetRenderDrawColor(state->renderer, 148, 163, 184, 255);
+        SDL_RenderDrawRect(state->renderer, &(SDL_Rect){64, 176, 512, 128});
         for (i = 0; i < count; ++i) draw_digit(state, i % 10, 80 + i * 36, 210, 5);
+        draw_bar(state, 88 + count * 36, 206, 5, 64, 250, 204, 21);
         break;
     }
     case 33:
         draw_bar(state, 140, 170, 360, 120, state->file_ok ? 74 : 248, state->file_ok ? 222 : 113, state->file_ok ? 128 : 113);
-        draw_digit(state, state->file_ok ? 1 : 0, 296, 190, 12);
+        draw_number(state, state->file_ok ? 1 : 0, 3, 236, 190, 12);
+        draw_gauge(state, 180, 330, 280, 28, state->file_ok ? 280 : 70, 280, 56, 189, 248);
         break;
     case 35:
         draw_bar(state, 80, 80, 480, 320, 30, 41, 59);
@@ -788,9 +821,13 @@ static void render_texture(DemoState *state, Uint32 ticks)
         break;
     }
     case 41:
+        draw_bar(state, 116, 116, 408, 192, 15, 23, 42);
+        SDL_SetRenderDrawColor(state->renderer, 148, 163, 184, 255);
+        SDL_RenderDrawRect(state->renderer, &(SDL_Rect){116, 116, 408, 192});
         draw_digit(state, 4, 160, 150, 14);
         draw_digit(state, 1, 250, 150, 14);
         draw_digit(state, (ticks / 500) % 10, 340, 150, 14);
+        draw_gauge(state, 164, 330, 312, 28, (ticks / 12) % 312, 312, 250, 204, 21);
         break;
     case 42:
         if (state->texture) {
@@ -812,24 +849,28 @@ static void render_texture(DemoState *state, Uint32 ticks)
         break;
     }
     case 45:
-        draw_digit(state, (state->timer_count / 10) % 10, 260, 170, 14);
-        draw_digit(state, state->timer_count % 10, 340, 170, 14);
+        draw_number(state, state->timer_count % 1000, 3, 218, 150, 14);
+        draw_gauge(state, 128, 330, 384, 32, state->timer_count % 60, 60, 250, 204, 21);
         break;
     case 46:
-        draw_bar(state, 100, 210, (state->thread_count * 3) % 440, 52, 56, 189, 248);
+        draw_number(state, state->thread_count % 1000, 3, 218, 150, 14);
+        draw_gauge(state, 96, 330, 448, 36, state->thread_count, 240, 56, 189, 248);
         break;
     case 47: {
         Uint32 sem_value = state->sem ? SDL_SemValue(state->sem) : 0;
-        draw_bar(state, 100, 210, (int)(sem_value * 3) % 440, 52, 74, 222, 128);
+        draw_number(state, (int)(sem_value % 1000), 3, 218, 150, 14);
+        draw_gauge(state, 96, 330, 448, 36, (int)sem_value, 240, 74, 222, 128);
         break;
     }
     case 48: {
         int atom = SDL_AtomicGet(&state->atomic_count);
-        draw_bar(state, 100, 210, (atom * 3) % 440, 52, 250, 204, 21);
+        draw_number(state, atom % 1000, 3, 218, 150, 14);
+        draw_gauge(state, 96, 330, 448, 36, atom, 240, 250, 204, 21);
         break;
     }
     case 49:
-        draw_bar(state, 100, 210, (state->sync_count * 3) % 440, 52, 248, 113, 113);
+        draw_number(state, state->sync_count % 1000, 3, 218, 150, 14);
+        draw_gauge(state, 96, 330, 448, 36, state->sync_count, 240, 248, 113, 113);
         break;
     default:
         break;
