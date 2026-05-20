@@ -74,8 +74,8 @@ That leaves 47 buildable SDL/SDL_image/SDL_ttf tutorial ports in this sweep.
 
 ## Build
 
-From MSYS2 with `NXDK_DIR` configured, or from this workspace layout with
-`.nxdk` beside the repository:
+From MSYS2 MinGW64 with `NXDK_DIR` configured, or from this workspace layout
+with `.nxdk` beside the repository:
 
 ```sh
 make
@@ -94,6 +94,9 @@ make release
 ```
 
 This writes ISOs and XBE folders under `dist/release/lazyfoo`.
+
+See [docs/BUILDING.md](docs/BUILDING.md) for the full build, release, and xemu
+capture workflow.
 
 ## Verification
 
@@ -122,6 +125,8 @@ handles `SDL_QUIT`.
 - `common/lazyfoo_demo.c` contains the shared tutorial implementations.
 - `common/lazyfoo_demo.h` contains lesson metadata.
 - `NNN_*` directories are standalone Xbox builds.
+- `docs/ROADMAP.md` tracks completed and deferred tutorials.
+- `docs/SCREENSHOT_AUDIT.md` tracks xemu capture status.
 
 ## License
 
