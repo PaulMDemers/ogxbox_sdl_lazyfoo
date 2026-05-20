@@ -30,16 +30,47 @@ Implemented:
 - 13 Alpha Blending
 - 14 Animated Sprites and VSync
 - 15 Rotation and Flipping
+- 17 Mouse Events
+- 18 Key States
+- 19 Gamepads and Joysticks
+- 20 Force Feedback
+- 22 Timing
+- 23 Advanced Timers
+- 24 Calculating Frame Rate
+- 25 Capping Frame Rate
+- 26 Motion
+- 27 Collision Detection
+- 28 Per-Pixel Collision Detection
+- 29 Circular Collision Detection
+- 30 Scrolling
+- 31 Scrolling Backgrounds
+- 32 Text Input and Clipboard Handling
+- 33 File Reading and Writing
+- 35 Window Events
+- 36 Multiple Windows
+- 37 Multiple Displays
+- 38 Particle Engines
+- 39 Tiling
+- 40 Texture Manipulation
+- 41 Bitmap Fonts
+- 42 Texture Streaming
+- 43 Render to Texture
+- 44 Frame Independent Movement
+- 45 Timer Callbacks
+- 46 Multithreading
+- 47 Semaphores
+- 48 Atomic Operations
+- 49 Mutexes and Conditions
 
 Skipped for now:
 
-- SDL_ttf lessons: 16, 47, 56
-- SDL_mixer lessons: 21
-- Platform/mobile lessons: 67-70
-- SDL/OpenGL lessons: 65-66
+- SDL_ttf lesson: 16
+- SDL_mixer lesson: 21
+- Audio recording lesson: 34
+- SDL/OpenGL lessons: 50-51
+- Platform/mobile/touch lessons: 52-55
 
-Later SDL-only lessons are still pending and should be added in numbered
-standalone folders following the same layout.
+That leaves 46 buildable SDL/SDL_image tutorial ports in this first sweep.
 
 ## Build
 
