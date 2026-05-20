@@ -1,0 +1,12 @@
+*.d
+*.obj
+*.exe
+*.elf
+*.lib
+*.xbe
+*.iso
+*.map
+*.lst
+bin/
+dist/
+build/
