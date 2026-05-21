@@ -20,47 +20,6 @@
 #define LAZYFOO_LESSON_SLUG "extension_libraries"
 #define LAZYFOO_LESSON_TITLE "Extension Libraries"
 
-static const char *k_xpm_image[] = {
-    "32 32 5 1",
-    "  c #202030",
-    ". c #38BDF8",
-    "+ c #F97316",
-    "* c #FACC15",
-    "# c #FFFFFF",
-    "################################",
-    "#..............................#",
-    "#..++++....++++....++++....++..#",
-    "#..+**+....+**+....+**+....++..#",
-    "#..++++....++++....++++....++..#",
-    "#..............................#",
-    "#......##################......#",
-    "#......#................#......#",
-    "#......#..++++..++++....#......#",
-    "#......#..+**+..+**+....#......#",
-    "#......#..++++..++++....#......#",
-    "#......#................#......#",
-    "#......##################......#",
-    "#..............................#",
-    "#..++++....++++....++++....++..#",
-    "#..+**+....+**+....+**+....++..#",
-    "#..++++....++++....++++....++..#",
-    "#..............................#",
-    "#......##################......#",
-    "#......#................#......#",
-    "#......#....++++..++++..#......#",
-    "#......#....+**+..+**+..#......#",
-    "#......#....++++..++++..#......#",
-    "#......#................#......#",
-    "#......##################......#",
-    "#..............................#",
-    "#..++++....++++....++++....++..#",
-    "#..+**+....+**+....+**+....++..#",
-    "#..++++....++++....++++....++..#",
-    "#..............................#",
-    "#..............................#",
-    "################################"
-};
-
 typedef struct DemoState {
     SDL_Window *window;
     SDL_Renderer *renderer;
@@ -261,8 +220,8 @@ static void setup(DemoState *state)
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK | SDL_INIT_TIMER) != 0) {
         fail("SDL_Init");
     }
-    if ((IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG) & (IMG_INIT_PNG | IMG_INIT_JPG)) == 0) {
-        debugPrint("SDL_image initialized without PNG/JPG flags; using built-in XPM path.\n");
+    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) == 0) {
+        fail("IMG_Init PNG");
     }
 
     snprintf(title, sizeof(title), "Lazy Foo %02d - %s", LAZYFOO_LESSON, LAZYFOO_LESSON_TITLE);
@@ -510,7 +469,7 @@ static void render_surface_lessons(DemoState *state, Uint32 ticks)
 {
     SDL_Rect dst;
     SDL_Surface *optimized;
-    SDL_Surface *xpm;
+    SDL_Surface *image;
     SDL_Surface *overlay_surface;
     Uint32 fill = SDL_MapRGB(state->window_surface->format, 12, 18, 32);
     SDL_FillRect(state->window_surface, NULL, fill);
@@ -521,32 +480,19 @@ static void render_surface_lessons(DemoState *state, Uint32 ticks)
     dst.h = 320;
     SDL_BlitScaled(state->surface, NULL, state->window_surface, &dst);
 
-    xpm = IMG_ReadXPMFromArray((char **)k_xpm_image);
-    if (!xpm) {
-        xpm = make_keyed_surface();
+    image = IMG_Load("D:\\lazyfoo_006_image.png");
+    if (!image) {
+        fail("IMG_Load lazyfoo_006_image.png");
     }
-    if (xpm) {
+    {
         SDL_Rect overlay = {dst.x + 96, dst.y + 96, 128, 128};
-        overlay_surface = SDL_ConvertSurface(xpm, state->window_surface->format, 0);
-        if (overlay_surface) {
-            SDL_BlitScaled(overlay_surface, NULL, state->window_surface, &overlay);
-            SDL_FreeSurface(overlay_surface);
-        } else {
-            SDL_BlitScaled(xpm, NULL, state->window_surface, &overlay);
+        overlay_surface = SDL_ConvertSurface(image, state->window_surface->format, 0);
+        if (!overlay_surface) {
+            fail("SDL_ConvertSurface asset");
         }
-        {
-            SDL_Rect stripe = {overlay.x + 52, overlay.y + 16, 24, 96};
-            SDL_FillRect(state->window_surface, &stripe,
-                         SDL_MapRGB(state->window_surface->format, 249, 115, 22));
-        }
-        SDL_FreeSurface(xpm);
-    } else {
-        SDL_Rect overlay = {dst.x + 96, dst.y + 96, 128, 128};
-        SDL_Rect stripe = {overlay.x + 52, overlay.y + 16, 24, 96};
-        SDL_FillRect(state->window_surface, &overlay,
-                     SDL_MapRGB(state->window_surface->format, 45, 212, 191));
-        SDL_FillRect(state->window_surface, &stripe,
-                     SDL_MapRGB(state->window_surface->format, 249, 115, 22));
+        SDL_BlitScaled(overlay_surface, NULL, state->window_surface, &overlay);
+        SDL_FreeSurface(overlay_surface);
+        SDL_FreeSurface(image);
     }
 
     SDL_UpdateWindowSurface(state->window);

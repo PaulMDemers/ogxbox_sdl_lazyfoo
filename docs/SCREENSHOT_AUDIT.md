@@ -37,7 +37,7 @@ Status legend:
 | 03 | Event Driven Programming | OK | Same render with event loop active. |
 | 04 | Key Presses | OK | D-pad/left-stick backed movement path. |
 | 05 | Optimized Surface Loading | OK | Converted surface and scaled blit. |
-| 06 | Extension Libraries | OK | SDL_image path plus visible procedural fallback overlay. |
+| 06 | Extension Libraries | OK | Packaged PNG loaded through SDL_image from `D:\`. |
 | 07 | Texture Loading and Rendering | OK | SDL texture creation/render path. |
 | 08 | Geometry Rendering | OK | Rect, outline, line, and point primitives. |
 | 09 | Viewport | OK | Four viewport quadrants render independently. |
@@ -87,8 +87,6 @@ Status legend:
 
 ## Follow-Up Items
 
-- Replace the lesson 6 procedural fallback with a real bundled PNG/JPG asset
-  once the asset packaging convention is settled.
 - Revisit lesson 32 after deciding whether to render real text input with
   SDL_ttf or keep the bitmap proxy for controller-friendly captures.
 - Add visual comparison snapshots once a desktop SDL reference runner exists.
