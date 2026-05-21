@@ -15,9 +15,12 @@ if captured too soon.
 
 - Date: 2026-05-20
 - Set: 52 lessons with `NXDK_DIR=../nxdk-sdl-mixer` and `NXGL_DIR=../nxgl`
-- Output: `dist/captures/xemu/lazyfoo_full_52`
+- Output: `dist/captures/xemu/lazyfoo_full_52_post_optin`
 - Result: all 52 ISOs booted and captured; contact-sheet review found no
   black-screen, viewport, or GL/PBKit quad regressions.
+- Notes: lesson 26 needed one xemu launch retry during the full sweep. Lessons
+  13 and 26 were recaptured with a 20 second delay and folded into the final
+  contact sheet to avoid early startup/debug-frame captures.
 
 ## Current Coverage
 
