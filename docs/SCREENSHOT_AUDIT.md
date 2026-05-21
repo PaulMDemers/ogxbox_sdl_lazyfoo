@@ -26,7 +26,7 @@ Status legend:
 | 03 | Event Driven Programming | OK | Same render with event loop active. |
 | 04 | Key Presses | OK | D-pad/left-stick backed movement path. |
 | 05 | Optimized Surface Loading | OK | Converted surface and scaled blit. |
-| 06 | Extension Libraries | Watch | SDL_image is linked; procedural base remains visible if XPM decode is weak. |
+| 06 | Extension Libraries | OK | SDL_image path plus visible procedural fallback overlay. |
 | 07 | Texture Loading and Rendering | OK | SDL texture creation/render path. |
 | 08 | Geometry Rendering | OK | Rect, outline, line, and point primitives. |
 | 09 | Viewport | OK | Four viewport quadrants render independently. |

@@ -6,13 +6,14 @@ SDL2_image, and SDL_ttf libraries.
 
 ## Implemented SDL/SDL_image/SDL_ttf Set
 
-Lessons 1-20 except 21, 22-33, and 35-49 are standalone ports. They cover SDL
-initialization, surfaces, events, controller-backed key input, optimized surface
-conversion, SDL_image, textures, geometry, viewports, color keying, sprite
-clips, modulation, alpha blending, animation timing, rotation/flipping, TTF text,
-input state, gamepad visualization, timing, collision, scrolling, file I/O,
-windows, displays, particles, tiles, pixel/streaming texture paths, render
-targets, threading, semaphores, atomics, and mutex/condition primitives.
+Lessons 1-20 except 21, 22-33, and 35-49 are standalone ports with one
+lesson-local `main.c` per tutorial. They cover SDL initialization, surfaces,
+events, controller-backed key input, optimized surface conversion, SDL_image,
+textures, geometry, viewports, color keying, sprite clips, modulation, alpha
+blending, animation timing, rotation/flipping, TTF text, input state, gamepad
+visualization, timing, collision, scrolling, file I/O, windows, displays,
+particles, tiles, pixel/streaming texture paths, render targets, threading,
+semaphores, atomics, and mutex/condition primitives.
 
 ## Deferred Dependencies
 

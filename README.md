@@ -122,9 +122,8 @@ handles `SDL_QUIT`.
 
 ## Layout
 
-- `common/lazyfoo_demo.c` contains the shared tutorial implementations.
-- `common/lazyfoo_demo.h` contains lesson metadata.
-- `NNN_*` directories are standalone Xbox builds.
+- `NNN_*` directories are standalone Xbox builds with lesson-local `main.c`
+  files.
 - `docs/ROADMAP.md` tracks completed and deferred tutorials.
 - `docs/SCREENSHOT_AUDIT.md` tracks xemu capture status.
 

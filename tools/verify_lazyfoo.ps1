@@ -68,11 +68,38 @@ foreach ($app in $apps) {
             Add-Failure "Missing $required in $app"
         }
     }
+
+    $mainPath = Join-Path $appDir "main.c"
+    $lessonMakefilePath = Join-Path $appDir "Makefile"
+    if (Test-Path $mainPath) {
+        $mainText = Get-Content -LiteralPath $mainPath -Raw
+        if ($mainText -match "lazyfoo_demo|\\.\\./common") {
+            Add-Failure "$app/main.c still depends on the old shared demo source."
+        }
+        if ($mainText -match "switch\s*\(\s*LAZYFOO_LESSON\s*\)") {
+            Add-Failure "$app/main.c still multiplexes lesson rendering through LAZYFOO_LESSON."
+        }
+        if ($mainText -notmatch "#define\s+LAZYFOO_LESSON\s+\d+") {
+            Add-Failure "$app/main.c does not declare its standalone lesson number."
+        }
+    }
+    if (Test-Path $lessonMakefilePath) {
+        $lessonMakefile = Get-Content -LiteralPath $lessonMakefilePath -Raw
+        if ($lessonMakefile -match "\\.\\./common|-DLAZYFOO_LESSON") {
+            Add-Failure "$app/Makefile still wires the old common lesson build."
+        }
+    }
 }
 
-foreach ($required in @("README.md", "LICENSE", "common\lazyfoo_demo.c", "common\lazyfoo_demo.h", "docs\ROADMAP.md")) {
+foreach ($required in @("README.md", "LICENSE", "docs\ROADMAP.md")) {
     if (-not (Test-Path (Join-Path $repo $required))) {
         Add-Failure "Missing required file: $required"
+    }
+}
+
+foreach ($removed in @("common\lazyfoo_demo.c", "common\lazyfoo_demo.h")) {
+    if (Test-Path (Join-Path $repo $removed)) {
+        Add-Failure "Obsolete shared tutorial file is still present: $removed"
     }
 }
 

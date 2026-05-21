@@ -30,6 +30,7 @@ For visual changes, capture the affected lesson in xemu and update
 
 ## Style
 
-The shared implementation lives in `common/lazyfoo_demo.c`. Keep tutorial
-rendering deterministic enough for screenshot comparison, and avoid depending
-on keyboard input for the default visual state.
+Keep tutorial behavior inside the matching `NNN_lesson_name/main.c` file so
+each lesson can be read and compared independently against the Lazy Foo source.
+Keep rendering deterministic enough for screenshot comparison, and avoid
+depending on keyboard input for the default visual state.
