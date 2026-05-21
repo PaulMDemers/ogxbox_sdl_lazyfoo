@@ -30,4 +30,5 @@ OpenGL lessons as explicit PBKit/NXGL rendering flavors.
 The practical SDL2 desktop tutorial set is complete except for audio capture
 and mobile/touch/orientation lessons. The next useful work is deeper visual
 parity capture for the 50-51 PBKit/NXGL variants and revisiting lesson 34 if an
-Xbox SDL audio capture backend lands.
+Xbox SDL audio capture backend lands. See `docs/DEPENDENCIES.md` for the
+current optional dependency gates and expected build counts.

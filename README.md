@@ -72,7 +72,9 @@ Skipped for now:
 - Platform/mobile/touch lessons: 52-55
 
 That leaves 49 buildable stock nxdk tutorial ports in this sweep, 51 when NXGL
-is available, and 52 when both NXGL and SDL_mixer are available.
+is available, and 52 when both NXGL and SDL_mixer are available. See
+[docs/DEPENDENCIES.md](docs/DEPENDENCIES.md) for the dependency matrix and
+expected build counts.
 
 ## Build
 
@@ -140,6 +142,8 @@ handles `SDL_QUIT`.
 
 - `NNN_*` directories are standalone Xbox builds with lesson-local `main.c`
   files.
+- `docs/DEPENDENCIES.md` lists optional dependency gates and expected lesson
+  counts.
 - `docs/ROADMAP.md` tracks completed and deferred tutorials.
 - `docs/SCREENSHOT_AUDIT.md` tracks xemu capture status.
 
