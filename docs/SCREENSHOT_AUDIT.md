@@ -11,6 +11,14 @@ plus a manifest under `dist/captures/xemu/lazyfoo`. The default delay is 15
 seconds because several renderer-backed demos can show the early debug framebuffer
 if captured too soon.
 
+## Latest Full Pass
+
+- Date: 2026-05-20
+- Set: 52 lessons with `NXDK_DIR=../nxdk-sdl-mixer` and `NXGL_DIR=../nxgl`
+- Output: `dist/captures/xemu/lazyfoo_full_52`
+- Result: all 52 ISOs booted and captured; contact-sheet review found no
+  black-screen, viewport, or GL/PBKit quad regressions.
+
 ## Current Coverage
 
 Status legend:
