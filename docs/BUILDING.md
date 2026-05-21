@@ -67,6 +67,10 @@ Use `-ResumeExisting` when only new or missing lessons need captures:
 powershell -ExecutionPolicy Bypass -File .\tools\capture_lazyfoo_xemu.ps1 -ResumeExisting
 ```
 
+The capture manifest is merged by lesson name, so recapturing a single lesson
+into an existing full-pass folder updates that entry without dropping the rest
+of the manifest.
+
 ## Build a Capture Contact Sheet
 
 ```powershell

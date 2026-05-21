@@ -424,5 +424,21 @@ $manifest = [ordered]@{
     output_root = $OutputRoot
     captures = $captures
 }
-$manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $OutputRoot "manifest.json") -Encoding ASCII
+
+$manifestPath = Join-Path $OutputRoot "manifest.json"
+if (Test-Path $manifestPath) {
+    $merged = @{}
+    $existing = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+    foreach ($capture in $existing.captures) {
+        if ($capture.app) {
+            $merged[$capture.app] = $capture
+        }
+    }
+    foreach ($capture in $captures) {
+        $merged[$capture.app] = $capture
+    }
+    $manifest.captures = @($merged.Keys | Sort-Object | ForEach-Object { $merged[$_] })
+}
+
+$manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $manifestPath -Encoding ASCII
 Write-Host ("Captured {0} Lazy Foo lesson(s) to {1}" -f $captures.Count, $OutputRoot)

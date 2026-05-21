@@ -35,6 +35,7 @@ function Get-CaptureEntries {
     if (Test-Path $manifestPath) {
         $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
         $entries = @()
+        $seen = @{}
         foreach ($capture in $manifest.captures) {
             $path = $capture.path
             if ([string]::IsNullOrWhiteSpace($path)) {
@@ -47,12 +48,24 @@ function Get-CaptureEntries {
                 name = $capture.app
                 path = $path
             }
+            $seen[$capture.app] = $true
         }
-        return ,$entries
+        foreach ($file in (Get-ChildItem -LiteralPath $Root -Filter "*.png" |
+                Where-Object { $_.Name -notmatch "contact_sheet|comparison_sheet|^compare_" } |
+                Sort-Object Name)) {
+            $name = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
+            if (-not $seen.ContainsKey($name)) {
+                $entries += [ordered]@{
+                    name = $name
+                    path = $file.FullName
+                }
+            }
+        }
+        return ,@($entries | Sort-Object { $_.name })
     }
 
     return ,@(Get-ChildItem -LiteralPath $Root -Filter "*.png" |
-        Where-Object { $_.Name -notmatch "contact_sheet|comparison_sheet" } |
+        Where-Object { $_.Name -notmatch "contact_sheet|comparison_sheet|^compare_" } |
         Sort-Object Name |
         ForEach-Object {
             [ordered]@{
