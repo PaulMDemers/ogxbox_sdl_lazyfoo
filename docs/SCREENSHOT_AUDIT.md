@@ -6,10 +6,18 @@ Capture command:
 powershell -ExecutionPolicy Bypass -File .\tools\capture_lazyfoo_xemu.ps1
 ```
 
+Contact sheet command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\make_capture_contact_sheet.ps1
+```
+
 The capture script boots each lesson ISO in a fresh xemu process and writes PNGs
 plus a manifest under `dist/captures/xemu/lazyfoo`. The default delay is 15
 seconds because several renderer-backed demos can show the early debug framebuffer
-if captured too soon.
+if captured too soon. The contact-sheet script turns a capture folder into a
+single review PNG and can compare against a reference capture root when one is
+available.
 
 ## Latest Full Pass
 
@@ -87,4 +95,5 @@ Status legend:
 
 ## Follow-Up Items
 
-- Add visual comparison snapshots once a desktop SDL reference runner exists.
+- Add desktop SDL reference snapshots and feed them to
+  `tools\make_capture_contact_sheet.ps1 -CompareRoot`.

@@ -119,6 +119,12 @@ powershell -ExecutionPolicy Bypass -File .\tools\capture_lazyfoo_xemu.ps1
 
 Screenshots are written to `dist/captures/xemu/lazyfoo` with a JSON manifest.
 
+To turn a capture folder into a reviewable contact sheet:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\make_capture_contact_sheet.ps1
+```
+
 Lesson 21 is enabled automatically when `NXDK_DIR` points at an nxdk tree that
 ships SDL_mixer:
 

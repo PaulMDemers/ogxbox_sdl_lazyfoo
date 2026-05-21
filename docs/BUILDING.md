@@ -66,3 +66,22 @@ Use `-ResumeExisting` when only new or missing lessons need captures:
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tools\capture_lazyfoo_xemu.ps1 -ResumeExisting
 ```
+
+## Build a Capture Contact Sheet
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\make_capture_contact_sheet.ps1
+```
+
+By default this reads `dist/captures/xemu/lazyfoo` and writes
+`contact_sheet.png` plus a JSON summary in the same folder. Use `-CaptureRoot`
+and `-OutputPath` to point it at a named capture pass:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\make_capture_contact_sheet.ps1 `
+  -CaptureRoot .\dist\captures\xemu\lazyfoo_full_52_post_optin `
+  -OutputPath .\dist\captures\xemu\lazyfoo_full_52_post_optin\contact_sheet.png
+```
+
+When desktop or reference captures are available, pass `-CompareRoot` to create
+side-by-side cells and a sampled mean absolute color delta for each lesson.
