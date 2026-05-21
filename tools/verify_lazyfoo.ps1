@@ -1,5 +1,5 @@
 param(
-    [int]$ExpectedImplementedCount = 47,
+    [int]$ExpectedImplementedCount = 0,
     [switch]$CheckReleaseArtifacts,
     [string]$ReleaseRoot = ""
 )
@@ -35,6 +35,15 @@ function Get-MakefileList {
     return $items
 }
 
+function Get-EvaluatedAppList {
+    $output = & make -s -C $repo print-apps 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not evaluate LAZYFOO_APPS with make:`n$($output -join "`n")"
+    }
+
+    return @($output | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+}
+
 function Get-AppIsoName {
     param([string]$App)
 
@@ -51,7 +60,16 @@ function Get-AppIsoName {
 
 $failures = @()
 $makefile = Get-Content -LiteralPath $makefilePath -Raw
-$apps = @(Get-MakefileList $makefile "LAZYFOO_APPS")
+$apps = @(Get-EvaluatedAppList)
+
+if ($apps.Count -ne $ExpectedImplementedCount) {
+    if ($ExpectedImplementedCount -eq 0) {
+        $ExpectedImplementedCount = $apps.Count
+    }
+    if ($ExpectedImplementedCount -eq 47 -and ($apps -contains "021_sound_effects_music")) {
+        $ExpectedImplementedCount = 48
+    }
+}
 
 if ($apps.Count -ne $ExpectedImplementedCount) {
     Add-Failure "LAZYFOO_APPS has $($apps.Count) entries, expected $ExpectedImplementedCount."

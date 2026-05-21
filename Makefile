@@ -1,3 +1,6 @@
+NXDK_DIR ?= $(CURDIR)/../.nxdk
+NXGL_DIR ?= $(CURDIR)/../nxgl
+
 LAZYFOO_APPS = \
 	001_hello_sdl \
 	002_image_on_screen \
@@ -47,12 +50,55 @@ LAZYFOO_APPS = \
 	048_atomic_operations \
 	049_mutexes_conditions
 
+OPENGL_VARIANTS = \
+	050_sdl_opengl_2_pbkit \
+	051_sdl_modern_opengl_pbkit
+
+ifneq ($(wildcard $(NXGL_DIR)/nxgl.mk),)
+OPENGL_VARIANTS := \
+	050_sdl_opengl_2_nxgl \
+	050_sdl_opengl_2_pbkit \
+	051_sdl_modern_opengl_nxgl \
+	051_sdl_modern_opengl_pbkit
+endif
+
+LAZYFOO_APPS += $(OPENGL_VARIANTS)
+
+MIXER_INSERT_AFTER = \
+	001_hello_sdl \
+	002_image_on_screen \
+	003_event_driven_programming \
+	004_key_presses \
+	005_optimized_surface_loading \
+	006_extension_libraries \
+	007_texture_loading_rendering \
+	008_geometry_rendering \
+	009_viewport \
+	010_color_keying \
+	011_clip_rendering_sprite_sheets \
+	012_color_modulation \
+	013_alpha_blending \
+	014_animated_sprites_vsync \
+	015_rotation_flipping \
+	016_true_type_fonts \
+	017_mouse_events \
+	018_key_states \
+	019_gamepads_joysticks \
+	020_force_feedback
+
+ifneq ($(wildcard $(NXDK_DIR)/lib/sdl/SDL_mixer/SDL_mixer.h),)
+LAZYFOO_APPS := \
+	$(filter $(MIXER_INSERT_AFTER),$(LAZYFOO_APPS)) \
+	021_sound_effects_music \
+	$(filter-out $(MIXER_INSERT_AFTER),$(LAZYFOO_APPS))
+endif
+
 .PHONY: all clean release print-apps $(LAZYFOO_APPS)
 
 all: $(LAZYFOO_APPS)
 
 $(LAZYFOO_APPS):
-	$(MAKE) -C $@
+	$(MAKE) -C $@ NXDK_DIR="$(NXDK_DIR)" NXGL_DIR="$(NXGL_DIR)"
 
 clean:
 	@for app in $(LAZYFOO_APPS); do $(MAKE) -C $$app clean || exit $$?; done

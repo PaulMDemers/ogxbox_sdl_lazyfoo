@@ -41,7 +41,7 @@ Status legend:
 | 18 | Key States | OK | Four input-state bars visible. |
 | 19 | Gamepads and Joysticks | OK | Cross-axis and center marker visible. |
 | 20 | Force Feedback | OK | Haptic pulse visualization visible. |
-| 21 | Sound Effects and Music | Deferred | SDL_mixer batch. |
+| 21 | Sound Effects and Music | OK | Optional SDL_mixer-backed build captured in xemu; generated music/effect bars visible. |
 | 22 | Timing | OK | Timer bar and digit visible. |
 | 23 | Advanced Timers | OK | SDL timer callback bar visible. |
 | 24 | Calculating Frame Rate | OK | Bitmap FPS digits visible. |
@@ -70,8 +70,8 @@ Status legend:
 | 47 | Semaphores | OK | Semaphore counter and gauge visible. |
 | 48 | Atomic Operations | OK | Atomic counter and gauge visible. |
 | 49 | Mutexes and Conditions | OK | Mutex/condition counter and gauge visible. |
-| 50 | SDL and OpenGL 2 | Deferred | nxdk SDL has no Xbox GL context path. |
-| 51 | SDL and Modern OpenGL | Deferred | nxdk SDL has no Xbox GL context path. |
+| 50 | SDL and OpenGL 2 | OK | PBKit and optional NXGL flavors captured; centered white quad target visible. |
+| 51 | SDL and Modern OpenGL | OK | PBKit shader/buffer-style and optional NXGL indexed-array flavors captured. |
 | 52-55 | Mobile/touch/orientation | Deferred | Not applicable as written. |
 
 ## Follow-Up Items

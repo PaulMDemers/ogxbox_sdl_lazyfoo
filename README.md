@@ -3,9 +3,9 @@
 Standalone original Xbox ports of the Lazy Foo SDL2 tutorial sequence.
 
 The first pass focuses on tutorials that can be expressed with nxdk's built-in
-SDL2, SDL2_image, and SDL_ttf support. Lessons that require SDL_mixer, mobile
-APIs, or SDL/OpenGL are tracked but skipped until those dependencies get their
-own pass.
+SDL2, SDL2_image, SDL_ttf, PBKit, and optional NXGL support. SDL_mixer lesson
+21 is included when the selected nxdk tree ships SDL_mixer. Mobile/touch APIs
+remain tracked but skipped.
 
 Source tutorial index:
 
@@ -35,6 +35,7 @@ Implemented:
 - 18 Key States
 - 19 Gamepads and Joysticks
 - 20 Force Feedback
+- 21 Sound Effects and Music (when `NXDK_DIR` includes SDL_mixer)
 - 22 Timing
 - 23 Advanced Timers
 - 24 Calculating Frame Rate
@@ -62,15 +63,16 @@ Implemented:
 - 47 Semaphores
 - 48 Atomic Operations
 - 49 Mutexes and Conditions
+- 50 SDL and OpenGL 2 (PBKit, plus NXGL when `NXGL_DIR` is available)
+- 51 SDL and Modern OpenGL (PBKit, plus NXGL when `NXGL_DIR` is available)
 
 Skipped for now:
 
-- SDL_mixer lesson: 21
 - Audio recording lesson: 34
-- SDL/OpenGL lessons: 50-51
 - Platform/mobile/touch lessons: 52-55
 
-That leaves 47 buildable SDL/SDL_image/SDL_ttf tutorial ports in this sweep.
+That leaves 49 buildable stock nxdk tutorial ports in this sweep, 51 when NXGL
+is available, and 52 when both NXGL and SDL_mixer are available.
 
 ## Build
 
@@ -100,7 +102,8 @@ capture workflow.
 
 ## Verification
 
-The release artifact checker expects the currently ported SDL/SDL_image/SDL_ttf set:
+The release artifact checker follows the evaluated Makefile app list, including
+optional SDL_mixer and NXGL lessons when their dependencies are available:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tools\verify_lazyfoo.ps1 -CheckReleaseArtifacts
@@ -113,6 +116,19 @@ powershell -ExecutionPolicy Bypass -File .\tools\capture_lazyfoo_xemu.ps1
 ```
 
 Screenshots are written to `dist/captures/xemu/lazyfoo` with a JSON manifest.
+
+Lesson 21 is enabled automatically when `NXDK_DIR` points at an nxdk tree that
+ships SDL_mixer:
+
+```powershell
+$env:NXDK_DIR="C:\path\to\nxdk-with-sdl-mixer"
+make release
+powershell -ExecutionPolicy Bypass -File .\tools\verify_lazyfoo.ps1 -CheckReleaseArtifacts
+```
+
+The NXGL variants of lessons 50 and 51 are enabled automatically when
+`NXGL_DIR` points at a checkout with `nxgl.mk`; otherwise the PBKit variants are
+still built.
 
 ## Controls
 
