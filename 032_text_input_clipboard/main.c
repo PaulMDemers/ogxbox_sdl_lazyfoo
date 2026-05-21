@@ -72,6 +72,8 @@ typedef struct DemoState {
     SDL_Texture *color_key_texture;
     SDL_Texture *font_texture;
     TTF_Font *font;
+    char input_text[64];
+    char clipboard_text[64];
     SDL_Rect sprite_clips[4];
     int input_x;
     int input_y;
@@ -236,6 +238,77 @@ static SDL_Texture *texture_from_surface(DemoState *state, SDL_Surface *surface)
     return texture;
 }
 
+static void append_text(char *dst, size_t dst_size, const char *src)
+{
+    size_t len;
+    size_t remaining;
+    if (!dst || !src || dst_size == 0) {
+        return;
+    }
+    len = strlen(dst);
+    if (len >= dst_size - 1) {
+        return;
+    }
+    remaining = dst_size - len - 1;
+    strncat(dst, src, remaining);
+}
+
+static void backspace_text(char *text)
+{
+    size_t len;
+    if (!text) {
+        return;
+    }
+    len = strlen(text);
+    if (len > 0) {
+        text[len - 1] = '\0';
+    }
+}
+
+static void copy_input_to_clipboard(DemoState *state)
+{
+    if (!state->input_text[0]) {
+        return;
+    }
+    snprintf(state->clipboard_text, sizeof(state->clipboard_text), "%s", state->input_text);
+    SDL_SetClipboardText(state->clipboard_text);
+}
+
+static void paste_clipboard_to_input(DemoState *state)
+{
+    char *text = SDL_GetClipboardText();
+    if (text && text[0]) {
+        append_text(state->input_text, sizeof(state->input_text), text);
+    } else {
+        append_text(state->input_text, sizeof(state->input_text), state->clipboard_text);
+    }
+    if (text) {
+        SDL_free(text);
+    }
+}
+
+static void render_ttf_text(DemoState *state, const char *text, int x, int y, SDL_Color color)
+{
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    SDL_Rect dst;
+    if (!state->font) {
+        return;
+    }
+    surface = TTF_RenderText_Blended(state->font, text && text[0] ? text : " ", color);
+    if (!surface) {
+        fail_ttf("TTF_RenderText_Blended");
+    }
+    texture = texture_from_surface(state, surface);
+    dst.x = x;
+    dst.y = y;
+    dst.w = surface->w;
+    dst.h = surface->h;
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy(state->renderer, texture, NULL, &dst);
+    SDL_DestroyTexture(texture);
+}
+
 static void create_renderer(DemoState *state)
 {
     state->renderer = SDL_CreateRenderer(state->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -294,23 +367,30 @@ static void setup(DemoState *state)
         SDL_SetTextureBlendMode(state->color_key_texture, SDL_BLENDMODE_BLEND);
     }
 
-    if (LAZYFOO_LESSON == 16) {
+    if (LAZYFOO_LESSON == 16 || LAZYFOO_LESSON == 32) {
         SDL_Color title_color = {125, 255, 125, 255};
         SDL_Surface *title_surface;
         if (TTF_Init() != 0) {
             fail_ttf("TTF_Init");
         }
         state->ttf_initialized = 1;
-        state->font = TTF_OpenFont("D:\\vegur-regular.ttf", 40);
+        state->font = TTF_OpenFont("D:\\vegur-regular.ttf", LAZYFOO_LESSON == 32 ? 30 : 40);
         if (!state->font) {
             fail_ttf("TTF_OpenFont");
         }
-        title_surface = TTF_RenderText_Blended(state->font, "Lazy Foo SDL_ttf", title_color);
-        if (!title_surface) {
-            fail_ttf("TTF_RenderText_Blended");
+        if (LAZYFOO_LESSON == 16) {
+            title_surface = TTF_RenderText_Blended(state->font, "Lazy Foo SDL_ttf", title_color);
+            if (!title_surface) {
+                fail_ttf("TTF_RenderText_Blended");
+            }
+            state->font_texture = texture_from_surface(state, title_surface);
+            SDL_FreeSurface(title_surface);
+        } else {
+            snprintf(state->input_text, sizeof(state->input_text), "Lazy Foo SDL");
+            snprintf(state->clipboard_text, sizeof(state->clipboard_text), "Clipboard text");
+            SDL_StartTextInput();
+            SDL_SetClipboardText(state->clipboard_text);
         }
-        state->font_texture = texture_from_surface(state, title_surface);
-        SDL_FreeSurface(title_surface);
     }
 
     state->sprite_clips[0] = (SDL_Rect){0, 0, 64, 64};
@@ -358,6 +438,7 @@ static void cleanup(DemoState *state)
     if (state->surface) SDL_FreeSurface(state->surface);
     if (state->renderer) SDL_DestroyRenderer(state->renderer);
     if (state->window) SDL_DestroyWindow(state->window);
+    SDL_StopTextInput();
     if (state->ttf_initialized) TTF_Quit();
     IMG_Quit();
     SDL_Quit();
@@ -372,9 +453,19 @@ static void handle_input(DemoState *state)
         if (e.type == SDL_QUIT) {
             state->running = 0;
         } else if (e.type == SDL_KEYDOWN) {
+            SDL_Keymod mod = SDL_GetModState();
             switch (e.key.keysym.sym) {
             case SDLK_ESCAPE:
                 state->running = 0;
+                break;
+            case SDLK_BACKSPACE:
+                if (LAZYFOO_LESSON == 32) backspace_text(state->input_text);
+                break;
+            case SDLK_c:
+                if (LAZYFOO_LESSON == 32 && (mod & KMOD_CTRL)) copy_input_to_clipboard(state);
+                break;
+            case SDLK_v:
+                if (LAZYFOO_LESSON == 32 && (mod & KMOD_CTRL)) paste_clipboard_to_input(state);
                 break;
             case SDLK_LEFT:
                 state->input_x = -1;
@@ -399,6 +490,14 @@ static void handle_input(DemoState *state)
             if (e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT) state->input_x = 1;
             if (e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP) state->input_y = -1;
             if (e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_DOWN) state->input_y = 1;
+            if (LAZYFOO_LESSON == 32 && e.cbutton.button == SDL_CONTROLLER_BUTTON_A) append_text(state->input_text, sizeof(state->input_text), "A");
+            if (LAZYFOO_LESSON == 32 && e.cbutton.button == SDL_CONTROLLER_BUTTON_B) backspace_text(state->input_text);
+            if (LAZYFOO_LESSON == 32 && e.cbutton.button == SDL_CONTROLLER_BUTTON_X) copy_input_to_clipboard(state);
+            if (LAZYFOO_LESSON == 32 && e.cbutton.button == SDL_CONTROLLER_BUTTON_Y) paste_clipboard_to_input(state);
+        } else if (e.type == SDL_TEXTINPUT) {
+            if (LAZYFOO_LESSON == 32) {
+                append_text(state->input_text, sizeof(state->input_text), e.text.text);
+            }
         } else if (e.type == SDL_JOYAXISMOTION) {
             if (e.jaxis.axis == 0) {
                 if (e.jaxis.value < -12000) state->input_x = -1;
@@ -532,14 +631,23 @@ static void render_texture(DemoState *state, Uint32 ticks)
     render_label_bars(state, ticks);
 
     {
-        int count = 3 + (ticks / 500) % 12;
-        int i;
-        SDL_StartTextInput();
-        draw_bar(state, 64, 176, 512, 128, 15, 23, 42);
+        SDL_Color heading = {226, 232, 240, 255};
+        SDL_Color input = {250, 204, 21, 255};
+        SDL_Color clipboard = {125, 255, 125, 255};
+        SDL_Rect input_box = {64, 176, 512, 92};
+        int cursor_x = 88 + (int)strlen(state->input_text) * 18;
+        draw_bar(state, 64, 116, 512, 216, 15, 23, 42);
+        SDL_SetRenderDrawColor(state->renderer, 30, 41, 59, 255);
+        SDL_RenderFillRect(state->renderer, &input_box);
         SDL_SetRenderDrawColor(state->renderer, 148, 163, 184, 255);
-        SDL_RenderDrawRect(state->renderer, &(SDL_Rect){64, 176, 512, 128});
-        for (i = 0; i < count; ++i) draw_digit(state, i % 10, 80 + i * 36, 210, 5);
-        draw_bar(state, 88 + count * 36, 206, 5, 64, 250, 204, 21);
+        SDL_RenderDrawRect(state->renderer, &input_box);
+        render_ttf_text(state, "Text Input and Clipboard Handling", 82, 132, heading);
+        render_ttf_text(state, state->input_text[0] ? state->input_text : " ", 88, 198, input);
+        if ((ticks / 500) % 2 == 0) {
+            draw_bar(state, cursor_x, 202, 4, 42, 250, 204, 21);
+        }
+        render_ttf_text(state, "Clipboard:", 82, 286, heading);
+        render_ttf_text(state, state->clipboard_text, 246, 286, clipboard);
     }
 
     SDL_RenderPresent(state->renderer);

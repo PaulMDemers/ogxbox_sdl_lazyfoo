@@ -4,4 +4,10 @@ SRCS = $(CURDIR)/main.c
 NXDK_DIR ?= $(CURDIR)/../../.nxdk
 NXDK_SDL = y
 
+all_local: copy_font all
+
 include $(NXDK_DIR)/Makefile
+
+copy_font:
+	@mkdir -p $(OUTPUT_DIR)
+	cp $(NXDK_DIR)/samples/sdl_ttf/vegur-regular.ttf $(OUTPUT_DIR)/

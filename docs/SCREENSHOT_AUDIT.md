@@ -63,7 +63,7 @@ Status legend:
 | 29 | Circular Collision Detection | OK | Circle pair visible. |
 | 30 | Scrolling | OK | Scrolling tile field visible. |
 | 31 | Scrolling Backgrounds | OK | Repeating background visible. |
-| 32 | Text Input and Clipboard Handling | Watch | Uses bitmap input field until SDL_ttf text UI is available. |
+| 32 | Text Input and Clipboard Handling | OK | SDL_ttf-rendered input and clipboard text visible. |
 | 33 | File Reading and Writing | Watch | File result indicator renders; verify real hardware storage later. |
 | 34 | Audio Recording | Deferred | nxdk Xbox audio capture support is disabled. |
 | 35 | Window Events | OK | Window-event proxy panel visible. |
@@ -87,6 +87,4 @@ Status legend:
 
 ## Follow-Up Items
 
-- Revisit lesson 32 after deciding whether to render real text input with
-  SDL_ttf or keep the bitmap proxy for controller-friendly captures.
 - Add visual comparison snapshots once a desktop SDL reference runner exists.
